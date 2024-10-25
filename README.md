@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/huizezhang-sherry/adtoolbox/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/huizezhang-sherry/adtoolbox/actions/workflows/R-CMD-check.yaml)
+[![test](https://github.com/huizezhang-sherry/adtoolbox/actions/workflows/test.yaml/badge.svg)](https://github.com/huizezhang-sherry/adtoolbox/actions/workflows/test-coverage.yaml)
 <!-- badges: end -->
 
 The goal of adtoolbox is to …
