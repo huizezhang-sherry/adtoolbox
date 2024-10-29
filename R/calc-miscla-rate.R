@@ -5,11 +5,12 @@
 #' @param include_f1 Whether to include F1 score
 #' @export
 #' @examples
-#' library(tibble)
-#' set.seed(123)
-#' dt <- tibble(pred = sample(0:1, 10000, replace = TRUE),
-#'              true = sample(0:1, 10000, replace = TRUE))
-#' dt |> calc_miscla_rate(pred, true, include_f1 = TRUE)
+#' library(broom)
+#' step_count |>
+#'   fit_logic_reg(response = unexpect,
+#'                 predictors = too_many_high_days:min_day_too_low) |>
+#'   augment() |>
+#'   calc_miscla_rate(unexpect, .fitted)
 calc_miscla_rate <- function(data, pred, true, include_f1 = FALSE){
   tbl <- table(data[[dplyr::ensym(pred)]], data[[dplyr::ensym(true)]])
 
@@ -32,6 +33,8 @@ calc_miscla_rate <- function(data, pred, true, include_f1 = FALSE){
     res <- res |> dplyr::mutate(F1 = 2 * (precision * recall) / (precision + recall))
   }
 
+  attr(res, "fit") <- attr(data, "fit")
+  attr(res, "data") <- data
   return(res)
 }
 
@@ -43,12 +46,14 @@ calc_miscla_rate <- function(data, pred, true, include_f1 = FALSE){
 #' @export
 #' @rdname metrics
 #' @examples
-#' library(tibble)
-#' set.seed(123)
-#' dt <- tibble(pred = sample(0:1, 10000, replace = TRUE),
-#'              true = sample(0:1, 10000, replace = TRUE))
-#' dt |> calc_miscla_rate(pred, true) |> dplyr::mutate(independence = 0.8) |> calc_metrics()
-#'
+#' library(broom)
+#' step_count |>
+#'   fit_logic_reg(response = unexpect,
+#'                 predictors = too_many_high_days:min_day_too_low) |>
+#'   augment() |>
+#'   calc_miscla_rate(unexpect, .fitted) |>
+#'   calc_independence() |>
+#'   calc_metrics(metrics = c("harmonic", "arithmetic"))
 calc_metrics <- function(data, metrics = c("harmonic", "square_root",
                                          "arithmetic", "geometric",
                                          "contraharmonic"),

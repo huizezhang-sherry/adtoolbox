@@ -49,11 +49,13 @@ square_root, arithmetic, geometric, contraharmonic means}
 Calculate combined metrics from precision, recall and independence
 }
 \examples{
-library(tibble)
-set.seed(123)
-dt <- tibble(pred = sample(0:1, 10000, replace = TRUE),
-             true = sample(0:1, 10000, replace = TRUE))
-dt |> calc_miscla_rate(pred, true) |> dplyr::mutate(independence = 0.8) |> calc_metrics()
-
+library(broom)
+step_count |>
+  fit_logic_reg(response = unexpect,
+                predictors = too_many_high_days:min_day_too_low) |>
+  augment() |>
+  calc_miscla_rate(unexpect, .fitted) |>
+  calc_independence() |>
+  calc_metrics(metrics = c("harmonic", "arithmetic"))
 }
 \keyword{datasets}

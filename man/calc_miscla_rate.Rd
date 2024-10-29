@@ -19,9 +19,10 @@ calc_miscla_rate(data, pred, true, include_f1 = FALSE)
 Calculate the misclassification rate (precision, recall, F1)
 }
 \examples{
-library(tibble)
-set.seed(123)
-dt <- tibble(pred = sample(0:1, 10000, replace = TRUE),
-             true = sample(0:1, 10000, replace = TRUE))
-dt |> calc_miscla_rate(pred, true, include_f1 = TRUE)
+library(broom)
+step_count |>
+  fit_logic_reg(response = unexpect,
+                predictors = too_many_high_days:min_day_too_low) |>
+  augment() |>
+  calc_miscla_rate(unexpect, .fitted)
 }
