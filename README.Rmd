@@ -41,12 +41,24 @@ remotes::install_github("huizezhang-sherry/adtoolbox")
 ```{r}
 library(adtoolbox)
 library(broom)
-step_count |> 
+fit1 <- step_count |> 
   fit_logic_reg(response = unexpect, 
-                predictors = too_many_high_days:min_day_too_low) |> 
+                predictors = too_many_high_days:min_day_too_low, seed = 1234) 
+
+fit2 <- step_count |> 
+  fit_logic_reg(response = unexpect, 
+                predictors = too_many_high_days:min_day_too_low,
+                nleaves = 4, seed = 1234) 
+
+fit3 <- step_count |> 
+  fit_logic_reg(response = unexpect, 
+                predictors = too_many_high_days:min_day_too_low,
+                nleaves = 2, seed = 1234) 
+
+purrr::map_dfr(list(fit1, fit2, fit3), ~.x |> 
   augment() |> 
   calc_miscla_rate(unexpect, .fitted) |> 
   calc_independence() |> 
-  calc_metrics(metrics = c("harmonic", "arithmetic"))
+  calc_metrics(metrics = c("harmonic", "arithmetic")))
 ```
 
