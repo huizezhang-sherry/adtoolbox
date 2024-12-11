@@ -52,12 +52,18 @@ plot_logicreg <- function(x, names){
 
   dt |>
     ggplot2::ggplot() +
-    ggplot2::geom_line(data = line_df, ggplot2::aes(x = x, y = y, group = group), alpha = 0.5) +
-    ggplot2::geom_label(ggplot2::aes(x = x, y = y, label = knot), parse = TRUE) +
+    ggplot2::geom_line(data = line_df, alpha = 0.5,
+                       ggplot2::aes(x = x, y = y, group = group),) +
+    ggplot2::geom_label(
+      ggplot2::aes(x = x, y = y, label = knot,
+                   color = as.factor(neg), fill = as.factor(neg)), parse = TRUE) +
+    ggplot2::scale_fill_manual(values = c("#ffffff", "#000000")) +
+    ggplot2::scale_color_manual(values = c("#000000", "#ffffff" )) +
     ggplot2::theme_void() +
-    ggplot2::xlim(0, 1)
+    ggplot2::xlim(0, 1) +
+    ggplot2::theme(legend.position = "none")
 
 }
 
-globalVariables(c("conc", "group", "knot", "number", "pick", "y"))
+globalVariables(c("conc", "group", "knot", "number", "pick", "y", "neg"))
 
