@@ -10,13 +10,14 @@
 #' @export
 #'
 plot_logicreg <- function(x, names){
+  #browser()
   stopifnot(class(x) == "logreg")
 
   if (length(x$model$trees) != 1) {
     stop("plotting only works for single tree models")
   }
 
-  dt <- x$model$trees[[1]]$trees |> dplyr::filter(pick == 1)
+  dt <- x$model$trees[[1]]$trees
   if (missing(names)){names <- x$binnames}
   dt$knot <- purrr::map(dt$knot, ~if(.x ==0) {0} else{names[.x]})
   dt$x <- 0
@@ -43,6 +44,7 @@ plot_logicreg <- function(x, names){
     }
   }
 
+  dt <- dt |> dplyr::filter(pick == 1)
   dt2 <- dt |> mutate(level = ceiling(log(number+1) / log(2)))
   line_df <- purrr::map_dfr(1:max(dt2$level - 1), function(idx){
     tibble::as_tibble(dt2) |>
