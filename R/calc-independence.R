@@ -22,9 +22,14 @@ calc_independence <- function(data){
 
   unexpected_df <- orig_data |> dplyr::filter(!!dplyr::sym(response_nm) == 1)
   used_df <- orig_data |> dplyr::select(!!!dplyr::syms(used_vars))
-  multiinfo <- infotheo::multiinformation(used_df |> dplyr::select(!!!dplyr::syms(used_vars)))
-  mi_per_obs <- multiinfo/nrow(unexpected_df)
-  data |> dplyr::mutate(overlapping = mi_per_obs, independence = 1 - overlapping)
+  dt <- used_df |> dplyr::select(!!!dplyr::syms(used_vars))
+  multiinfo <- infotheo::multiinformation(dt)
+  sum_entropy <- lapply(as.list(dt),
+                        function(x){infotheo::entropy(x, method = "emp")}) |>
+    unlist() |>
+    sum()
+  joint_entropy <- sum_entropy - multiinfo
+  data |> dplyr::mutate(independence = joint_entropy/sum_entropy)
 }
 
 globalVariables(c("overlapping", ":="))
