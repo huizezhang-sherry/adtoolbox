@@ -24,12 +24,12 @@ calc_independence <- function(data){
   used_df <- orig_data |> dplyr::select(!!!dplyr::syms(used_vars))
   dt <- used_df |> dplyr::select(!!!dplyr::syms(used_vars))
   multiinfo <- infotheo::multiinformation(dt)
-  sum_entropy <- lapply(as.list(dt),
-                        function(x){infotheo::entropy(x, method = "emp")}) |>
-    unlist() |>
-    sum()
+  ind_entropy <- lapply(as.list(dt),  function(x){infotheo::entropy(x, method = "emp")}) |> unlist()
+  sum_entropy <- sum(ind_entropy)
   joint_entropy <- sum_entropy - multiinfo
-  data |> dplyr::mutate(independence = joint_entropy/sum_entropy)
+  n_var <- ncol(dt)
+  ratio <- joint_entropy / sum_entropy
+  data |> dplyr::mutate(independence = (ratio - 1/n_var)/(1 - 1/n_var))
 }
 
 globalVariables(c("overlapping", ":="))
